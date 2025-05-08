@@ -11,6 +11,8 @@ composeBom = "2024.09.00"
 
 ## test
 mockk = "1.14.2"
+turbine = "1.2.0"
+
 
 ## coroutines
 coroutines = "1.9.0"
@@ -25,6 +27,10 @@ retrofit = "2.11.0"
 
 ## coil
 coil = "2.7.0"
+
+## data store
+datastorePreferences = "1.1.6"
+
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -44,6 +50,8 @@ androidx-material3 = { group = "androidx.compose.material3", name = "material3" 
 
 ## test
 mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
+turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
+
 
 ## coroutines
 coroutines-android = {group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }
@@ -63,6 +71,10 @@ retrofit-converter-gson = { module = "com.squareup.retrofit2:converter-gson", ve
 
 ## coil
 coil = { module = "io.coil-kt:coil", version.ref = "coil" }
+
+## data store
+androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
+
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
