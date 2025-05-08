@@ -8,14 +8,37 @@ import kotlinx.coroutines.flow.flowOn
 
 /**
  * Api BaseResponse
+ * @param status If the request was successful or not. Options: ok, error. In the case of error a code and message property will be populated.
+ * @param totalResults The total number of results available for your request. Only a limited number are shown at a time though, so use the page parameter in your requests to page through them.
+ * @param articles
+ * @param code 當 status 為 error 時，會出現
+ * @param message 當 status 為 error 時，會出現
  */
 open class BaseNewsResponse<T> {
 
-    val status: String? = null
+    var status: String? = null
 
-    val totalResults: Int = -1
+    var totalResults: Int = 0
 
-    val articles: List<T>? = null
+    var articles: List<T>? = null
+
+    var code: String? = null
+
+    var message: String? = null
+
+    constructor(
+        status: String? = null,
+        totalResults: Int = 0,
+        articles: List<T>? = null,
+        code: String? = null,
+        message: String? = null
+    ) {
+        this.status = status
+        this.totalResults = totalResults
+        this.articles = articles
+        this.code = code
+        this.message = message
+    }
 
     /**
      * 是否回應成功
@@ -25,7 +48,7 @@ open class BaseNewsResponse<T> {
     }
 
     open fun toException(): NewsApiException {
-        return NewsApiException(status, totalResults)
+        return NewsApiException(code ?: "Unknown", message ?: "Unknown error.")
     }
 
     open fun getOrThrow(): List<T> {

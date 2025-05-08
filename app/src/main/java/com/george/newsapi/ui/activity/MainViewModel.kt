@@ -1,10 +1,9 @@
 package com.george.newsapi.ui.activity
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.george.newsapi.data.model.api.base.asFlow
-import com.george.newsapi.data.service.NewsApiService
+import com.george.newsapi.data.model.api.queryparams.SearchNewsParams
+import com.george.newsapi.data.repository.ArticleRepository
 import com.george.newsapi.di.IoDispatcher
 import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,7 +17,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val apiService: NewsApiService,
+    private val articleRepository: ArticleRepository,
     private val gson: Gson,
     @IoDispatcher private val dispatcher: CoroutineDispatcher
 ) : ViewModel() {
@@ -29,8 +28,11 @@ class MainViewModel @Inject constructor(
 
     fun getTopHeadlines() {
         viewModelScope.launch(dispatcher) {
-            apiService.getTopHeadlines("us")
-                .asFlow(dispatcher)
+            articleRepository
+//                .getTopHeadlines(GetTopHeadlinesParams(country = "us")
+                .searchNews(
+                    SearchNewsParams(query = "BTC")
+                )
                 .catch { e ->
                     _viewState.value = e.toString()
                 }
