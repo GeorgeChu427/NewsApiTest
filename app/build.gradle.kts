@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
 }
@@ -46,6 +47,7 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.fragment.compose)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
@@ -60,6 +62,9 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
     testImplementation(libs.turbine)
 
+
+    implementation(libs.bundles.navigation)
+
     testImplementation(kotlin("test"))
     testImplementation(libs.mockk)
 
@@ -69,6 +74,7 @@ dependencies {
 
     ksp(libs.hilt.android.compiler)
     implementation(libs.hilt.android)
+    implementation(libs.hilt.navigation.compose)
 
     implementation(libs.gson)
     implementation(libs.okhttp)

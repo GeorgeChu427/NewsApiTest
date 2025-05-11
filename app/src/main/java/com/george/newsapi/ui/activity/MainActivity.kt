@@ -1,63 +1,23 @@
 package com.george.newsapi.ui.activity
 
 import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
-import androidx.activity.viewModels
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.lifecycleScope
-import com.george.newsapi.ui.theme.NewsApiTheme
+import androidx.appcompat.app.AppCompatActivity
+import com.george.newsapi.R
+import com.george.newsapi.ui.fragment.config.ConfigFragment
+import com.george.newsapi.ui.fragment.headlines.HeadlinesFragment
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class MainActivity : ComponentActivity() {
-
-    private val viewModel: MainViewModel by viewModels()
+class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContent {
-            NewsApiTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        text = viewModel.viewState.collectAsState().value,
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
-            }
-        }
+        setContentView(R.layout.activity_main)
+        supportFragmentManager.beginTransaction()
+//            .replace(R.id.fragment_container, HeadlinesFragment.newInstance())
+            .replace(R.id.fragment_container, ConfigFragment.newInstance())
+            .commit()
     }
 
-    override fun onResume() {
-        super.onResume()
-        lifecycleScope.launch {
-            viewModel.getTopHeadlines()
-        }
-    }
 }
 
-@Composable
-fun Greeting(text: String, modifier: Modifier = Modifier) {
-    Text(
-        text = text,
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    NewsApiTheme {
-        Greeting("Android")
-    }
-}

@@ -2,6 +2,8 @@ package com.george.newsapi.di
 
 import com.george.newsapi.data.repository.ArticleRepository
 import com.george.newsapi.data.repository.ArticleRepositoryImpl
+import com.george.newsapi.data.repository.config.ConfigRepository
+import com.george.newsapi.data.repository.config.ConfigRepositoryImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -16,4 +18,8 @@ abstract class RepositoryModules {
         impl: ArticleRepositoryImpl
     ): ArticleRepository
 
+    @Binds
+    abstract fun bindConfigRepository(
+        impl: ConfigRepositoryImpl
+    ): ConfigRepository
 }

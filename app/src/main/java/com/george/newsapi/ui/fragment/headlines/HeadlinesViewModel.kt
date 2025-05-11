@@ -1,4 +1,4 @@
-package com.george.newsapi.ui.activity
+package com.george.newsapi.ui.fragment.headlines
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -16,7 +16,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class MainViewModel @Inject constructor(
+class HeadlinesViewModel @Inject constructor(
     private val articleRepository: ArticleRepository,
     private val gson: Gson,
     @IoDispatcher private val dispatcher: CoroutineDispatcher
