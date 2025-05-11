@@ -1,4 +1,4 @@
-package com.george.newsapi.ui.fragment.headlines
+package com.george.newsapi.ui.screen.headlines
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -25,6 +25,9 @@ class HeadlinesViewModel @Inject constructor(
     private val _viewState = MutableStateFlow("loading...")
     val viewState = _viewState.asStateFlow()
 
+    init {
+        getTopHeadlines()
+    }
 
     fun getTopHeadlines() {
         viewModelScope.launch(dispatcher) {

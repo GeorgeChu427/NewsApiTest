@@ -10,7 +10,7 @@ import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.george.newsapi.data.model.store.config.ThemeMode
-import com.george.newsapi.ui.fragment.config.ConfigViewModel
+import com.george.newsapi.ui.screen.config.ConfigViewModel
 
 private val DarkColorScheme = darkColorScheme(
     primary = Purple80,

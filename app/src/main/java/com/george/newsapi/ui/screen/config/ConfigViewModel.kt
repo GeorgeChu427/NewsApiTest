@@ -1,4 +1,4 @@
-package com.george.newsapi.ui.fragment.config
+package com.george.newsapi.ui.screen.config
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
