@@ -1,26 +1,29 @@
 package com.george.newsapi.ui.screen.headlines
 
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import com.george.newsapi.ui.theme.MyApp
+import kotlin.random.Random
 
 @Composable
 fun HeadlinesScreen(
     viewModel: HeadlinesViewModel = hiltViewModel()
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
-    val viewState by viewModel.viewState.collectAsStateWithLifecycle()
+    val articles by viewModel.viewState.collectAsStateWithLifecycle()
 
     LaunchedEffect(lifecycleOwner) {
         lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
@@ -29,11 +32,23 @@ fun HeadlinesScreen(
     }
 
     MyApp {
-        Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-            Text(
-                text = viewState,
-                modifier = Modifier.padding(innerPadding)
-            )
+        LazyColumn {
+            itemsIndexed(
+                items = articles,
+                key = { _, item ->
+                    item.title ?: Random.nextInt(0, Int.MAX_VALUE).toString()
+                }
+            ) { _, item ->
+                ArticleCard(
+                    article = item,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp)
+                        .clickable {
+                            // todo start detail screen
+                        }
+                )
+            }
         }
     }
 }

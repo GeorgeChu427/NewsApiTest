@@ -85,6 +85,7 @@ retrofit-converter-gson = { module = "com.squareup.retrofit2:converter-gson", ve
 
 ## coil
 coil = { module = "io.coil-kt:coil", version.ref = "coil" }
+coil-compose = { module = "io.coil-kt.coil3:coil-compose", version = "3.1.0" }
 
 ## data store
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
@@ -100,3 +101,4 @@ hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 
 [bundles]
 navigation = ["navigation-compose", "navigation-fragment", "navigation-ui"]
+coil = ["coil", "coil-compose"]

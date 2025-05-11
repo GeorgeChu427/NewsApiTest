@@ -2,6 +2,8 @@ package com.george.newsapi.ui.screen.headlines
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.george.newsapi.data.model.api.article.Article
+import com.george.newsapi.data.model.api.queryparams.GetTopHeadlinesParams
 import com.george.newsapi.data.model.api.queryparams.SearchNewsParams
 import com.george.newsapi.data.repository.ArticleRepository
 import com.george.newsapi.di.IoDispatcher
@@ -11,7 +13,6 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -22,7 +23,7 @@ class HeadlinesViewModel @Inject constructor(
     @IoDispatcher private val dispatcher: CoroutineDispatcher
 ) : ViewModel() {
 
-    private val _viewState = MutableStateFlow("loading...")
+    private val _viewState = MutableStateFlow<List<Article>>(emptyList())
     val viewState = _viewState.asStateFlow()
 
     init {
@@ -32,18 +33,15 @@ class HeadlinesViewModel @Inject constructor(
     fun getTopHeadlines() {
         viewModelScope.launch(dispatcher) {
             articleRepository
-//                .getTopHeadlines(GetTopHeadlinesParams(country = "us")
-                .searchNews(
-                    SearchNewsParams(query = "BTC")
-                )
+                .getTopHeadlinesArticles(GetTopHeadlinesParams(country = "us"))
+//                .searchNews(
+//                    SearchNewsParams(query = "BTC")
+//                )
                 .catch { e ->
-                    _viewState.value = e.toString()
+//                    _viewState.value = e.toString()
                 }
-                .map {
-                    gson.toJson(it)
-                }
-                .collect { message ->
-                    _viewState.value = message
+                .collect { articles ->
+                    _viewState.value = articles
                 }
         }
     }

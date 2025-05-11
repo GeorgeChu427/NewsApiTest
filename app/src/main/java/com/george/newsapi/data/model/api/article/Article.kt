@@ -1,5 +1,7 @@
 package com.george.newsapi.data.model.api.article
 
+import com.google.gson.annotations.SerializedName
+
 /**
  * 新聞文章 Model
  * @param source for the source this article came from.
@@ -17,6 +19,7 @@ data class Article(
     val title: String? = null,
     val description: String? = null,
     val url: String? = null,
+    @SerializedName("urlToImage")
     val urlToImage: String? = null,
     val publishedAt: String? = null,
     val content: String? = null
