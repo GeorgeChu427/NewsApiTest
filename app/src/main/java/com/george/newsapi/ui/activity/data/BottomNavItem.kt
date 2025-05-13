@@ -9,24 +9,22 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import com.george.newsapi.ui.Route
 
 enum class BottomNavItem(
-    val title: String,
+    val route: Route,
     val selectedIcon: ImageVector,
     val unSelectedIcon: ImageVector,
-    val route: String
 ) {
 
     HEADLINES(
-        title = "Hot",
+        route = Route.HEADLINES,
         selectedIcon = Icons.Filled.Home,
         unSelectedIcon = Icons.Outlined.Home,
-        route = Route.HEADLINES
+
     ),
 
     CONFIG(
-        title = "Config",
+        route = Route.CONFIG,
         selectedIcon = Icons.Filled.Settings,
         unSelectedIcon = Icons.Outlined.Settings,
-        route = Route.CONFIG
     );
 
 }

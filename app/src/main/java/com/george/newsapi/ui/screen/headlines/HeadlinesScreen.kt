@@ -51,7 +51,7 @@ fun HeadlinesScreen(
                         .padding(8.dp)
                         .clickable {
                             sharedViewModel.selectArticle(item)
-                            navController.navigate(Route.DETAIL)
+                            Route.DETAIL.navigate(navController)
                         }
                 )
             }
