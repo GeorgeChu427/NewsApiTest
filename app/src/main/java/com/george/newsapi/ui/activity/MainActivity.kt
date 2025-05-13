@@ -30,6 +30,7 @@ import com.george.newsapi.ui.activity.data.BottomNavItem
 import com.george.newsapi.ui.screen.config.ConfigScreen
 import com.george.newsapi.ui.screen.detail.DetailScreen
 import com.george.newsapi.ui.screen.headlines.HeadlinesScreen
+import com.george.newsapi.ui.screen.webview.WebViewScreen
 import com.george.newsapi.ui.theme.MyApp
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -118,11 +119,24 @@ class MainActivity : ComponentActivity() {
                                 sharedArticleViewModel.clear()
                             },
                             onOpenWebClick = { url ->
-                                //todo 開啟網頁
+                                navController.navigate(Route.WEB)
                             }
                         )
                     } else {
                         Text("Article not found")
+                    }
+                }
+
+                composable(Route.WEB) {
+                    val article by sharedArticleViewModel.selectedArticle.collectAsState()
+
+                    if (article != null && !article?.url.isNullOrBlank()) {
+                        WebViewScreen(
+                            article = article!!,
+                            onBackClick = {
+                                navController.popBackStack()
+                            }
+                        )
                     }
                 }
             }

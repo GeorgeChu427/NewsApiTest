@@ -16,4 +16,9 @@ object Route {
      * 詳細新聞頁面
      */
     const val DETAIL = "detail"
+
+    /**
+     * WebView
+     */
+    const val WEB = "webView"
 }
