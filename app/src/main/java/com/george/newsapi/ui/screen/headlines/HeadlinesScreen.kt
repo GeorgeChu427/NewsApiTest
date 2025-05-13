@@ -15,12 +15,17 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.NavController
+import com.george.newsapi.ui.Route
+import com.george.newsapi.ui.activity.SharedArticleViewModel
 import com.george.newsapi.ui.theme.MyApp
 import kotlin.random.Random
 
 @Composable
 fun HeadlinesScreen(
-    viewModel: HeadlinesViewModel = hiltViewModel()
+    navController: NavController,
+    viewModel: HeadlinesViewModel = hiltViewModel(),
+    sharedViewModel: SharedArticleViewModel
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
     val articles by viewModel.viewState.collectAsStateWithLifecycle()
@@ -45,7 +50,8 @@ fun HeadlinesScreen(
                         .fillMaxWidth()
                         .padding(8.dp)
                         .clickable {
-                            // todo start detail screen
+                            sharedViewModel.selectArticle(item)
+                            navController.navigate(Route.DETAIL)
                         }
                 )
             }

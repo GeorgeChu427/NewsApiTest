@@ -6,6 +6,7 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.ui.graphics.vector.ImageVector
+import com.george.newsapi.ui.Route
 
 enum class BottomNavItem(
     val title: String,
@@ -18,14 +19,14 @@ enum class BottomNavItem(
         title = "Hot",
         selectedIcon = Icons.Filled.Home,
         unSelectedIcon = Icons.Outlined.Home,
-        route = "Headlines"
+        route = Route.HEADLINES
     ),
 
     CONFIG(
         title = "Config",
         selectedIcon = Icons.Filled.Settings,
         unSelectedIcon = Icons.Outlined.Settings,
-        route = "Config"
+        route = Route.CONFIG
     );
 
 }
