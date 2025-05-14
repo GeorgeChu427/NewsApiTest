@@ -10,6 +10,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -34,13 +35,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.george.newsapi.R
 import com.george.newsapi.ui.Route
 import com.george.newsapi.ui.activity.data.BottomNavItem
+import com.george.newsapi.ui.composableByRoute
 import com.george.newsapi.ui.screen.config.ConfigScreen
 import com.george.newsapi.ui.screen.detail.DetailScreen
 import com.george.newsapi.ui.screen.headlines.HeadlinesScreen
@@ -56,22 +58,64 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             MyApp {
-                MainScreen()
+                val mainNavController = rememberNavController()
+
+                val sharedArticleViewModel: SharedArticleViewModel = hiltViewModel()
+
+                NavHost(
+                    navController = mainNavController,
+                    startDestination = Route.MAIN.route,
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    composableByRoute(Route.MAIN) {
+                        MainScreen(mainNavController, sharedArticleViewModel)
+                    }
+                    composableByRoute(Route.DETAIL) {
+                        val article by sharedArticleViewModel.selectedArticle.collectAsState()
+
+                        if (article != null) {
+                            DetailScreen(
+                                article = article!!,
+                                onBackClick = {
+                                    mainNavController.popBackStack()
+                                    sharedArticleViewModel.clear()
+                                },
+                                onOpenWebClick = { url ->
+                                    Route.WEB.navigate(mainNavController)
+                                }
+                            )
+                        } else {
+                            Text("Article not found")
+                        }
+                    }
+
+                    composableByRoute(Route.WEB) {
+                        val article by sharedArticleViewModel.selectedArticle.collectAsState()
+                        if (article != null && !article?.url.isNullOrBlank()) {
+                            WebViewScreen(
+                                article = article!!,
+                                onBackClick = {
+                                    mainNavController.popBackStack()
+                                }
+                            )
+                        }
+                    }
+                }
             }
         }
     }
 
     @SuppressLint("ContextCastToActivity")
     @Composable
-    fun MainScreen() {
+    fun MainScreen(
+        mainNavController: NavHostController,
+        sharedArticleViewModel: SharedArticleViewModel
+    ) {
         val navController = rememberNavController()
 
         var selectedItemIndex: Int by rememberSaveable {
             mutableIntStateOf(0)
         }
-
-        val sharedArticleViewModel: SharedArticleViewModel =
-            hiltViewModel(LocalContext.current as ComponentActivity)
 
         // 控制 NavigationBar 顯示與否
         val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -81,32 +125,30 @@ class MainActivity : ComponentActivity() {
 
         Scaffold(
             topBar = {
-                if (currentRoute.isHomeScreen) {
-                    Box(
+                Box(
+                    modifier = Modifier
+                        .padding(WindowInsets.statusBars.asPaddingValues())
+                        .height(40.dp)
+                        .padding(horizontal = 12.dp)
+                ) {
+                    Text(
+                        text = currentRoute.title,
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.W500,
+                        textAlign = TextAlign.Center,
                         modifier = Modifier
-                            .padding(WindowInsets.statusBars.asPaddingValues())
-                            .height(40.dp)
-                            .padding(horizontal = 12.dp)
-                    ) {
-                        Text(
-                            text = currentRoute.title,
-                            fontSize = 24.sp,
-                            fontWeight = FontWeight.W500,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .align(Alignment.Center)
-                        )
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_switch),
-                            contentDescription = "Switch Language",
-                            modifier = Modifier
-                                .align(Alignment.CenterEnd)
-                                .clickable {
-                                    // todo Switch Language
-                                }
-                        )
-                    }
+                            .fillMaxWidth()
+                            .align(Alignment.Center)
+                    )
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_switch),
+                        contentDescription = "Switch Language",
+                        modifier = Modifier
+                            .align(Alignment.CenterEnd)
+                            .clickable {
+                                // todo Switch Language
+                            }
+                    )
                 }
             },
             bottomBar = {
@@ -140,51 +182,14 @@ class MainActivity : ComponentActivity() {
                 startDestination = Route.HEADLINES.route,
                 modifier = Modifier.padding(paddingValues)
             ) {
-                composable(Route.HEADLINES.route) {
+                composableByRoute(Route.HEADLINES) {
                     HeadlinesScreen(
-                        navController,
+                        mainNavController = mainNavController,
                         sharedViewModel = sharedArticleViewModel
                     )
                 }
-                composable(Route.CONFIG.route) { ConfigScreen() }
-
-                composable(
-                    route = Route.DETAIL.route,
-                    enterTransition = Route.DETAIL.enterTransition,
-                    exitTransition = Route.DETAIL.exitTransition
-                ) {
-                    val article by sharedArticleViewModel.selectedArticle.collectAsState()
-
-                    if (article != null) {
-                        DetailScreen(
-                            article = article!!,
-                            onBackClick = {
-                                navController.popBackStack()
-                                sharedArticleViewModel.clear()
-                            },
-                            onOpenWebClick = { url ->
-                                Route.WEB.navigate(navController)
-                            }
-                        )
-                    } else {
-                        Text("Article not found")
-                    }
-                }
-
-                composable(
-                    route = Route.WEB.route,
-                    enterTransition = Route.WEB.enterTransition,
-                    exitTransition = Route.WEB.exitTransition
-                ) {
-                    val article by sharedArticleViewModel.selectedArticle.collectAsState()
-                    if (article != null && !article?.url.isNullOrBlank()) {
-                        WebViewScreen(
-                            article = article!!,
-                            onBackClick = {
-                                navController.popBackStack()
-                            }
-                        )
-                    }
+                composableByRoute(Route.CONFIG) {
+                    ConfigScreen()
                 }
             }
         }

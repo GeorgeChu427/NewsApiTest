@@ -1,11 +1,15 @@
 package com.george.newsapi.ui
 
+import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.tween
+import androidx.compose.runtime.Composable
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.compose.composable
 import com.george.newsapi.SCREEN_NAV_DURATION
 
 enum class Route(
@@ -17,7 +21,15 @@ enum class Route(
 ) {
 
     /**
-     * 頭條新聞 (首頁)
+     * 首頁
+     */
+    MAIN(
+        route = "main",
+        title = "Main"
+    ),
+
+    /**
+     * 頭條新聞
      */
     HEADLINES(
         route = "headlines",
@@ -89,3 +101,13 @@ enum class Route(
 
     }
 }
+
+fun NavGraphBuilder.composableByRoute(
+    routeEnum: Route,
+    content: @Composable AnimatedContentScope.(NavBackStackEntry) -> Unit
+) = this.composable(
+    route = routeEnum.route,
+    enterTransition = routeEnum.enterTransition,
+    exitTransition = routeEnum.exitTransition,
+    content = content
+)
