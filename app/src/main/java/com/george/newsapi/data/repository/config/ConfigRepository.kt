@@ -1,5 +1,6 @@
 package com.george.newsapi.data.repository.config
 
+import com.george.newsapi.data.model.store.config.LanguageCode
 import com.george.newsapi.data.model.store.config.ThemeMode
 import kotlinx.coroutines.flow.Flow
 
@@ -9,12 +10,12 @@ interface ConfigRepository {
      * 取得 多國語系
      * @return Flow
      */
-    fun getLanguageCode(): Flow<String>
+    fun getLanguageCode(): Flow<LanguageCode>
 
     /**
      * 設定 多國語系
      */
-    suspend fun setLanguageCode(code: String)
+    suspend fun setLanguageCode(code: LanguageCode)
 
     /**
      * 取得 主題模式

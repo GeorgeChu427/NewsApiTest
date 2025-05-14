@@ -1,5 +1,8 @@
 package com.george.newsapi.data.model.api.article
 
+import com.george.newsapi.data.model.strings.AppStrings
+import com.george.newsapi.data.model.strings.Strings
+
 enum class ArticleCategory(val value: String) {
 
     ALL(""),
@@ -29,6 +32,15 @@ enum class ArticleCategory(val value: String) {
 
 }
 
-fun ArticleCategory.displayName(): String {
-    return name.lowercase().replaceFirstChar { it.uppercase() }
+fun ArticleCategory.displayName(appStrings: AppStrings): String {
+    return when (this) {
+        ArticleCategory.ALL -> appStrings.categoryAll
+        ArticleCategory.BUSINESS -> appStrings.categoryBusiness
+        ArticleCategory.ENTERTAINMENT -> appStrings.categoryEntertainment
+        ArticleCategory.GENERAL -> appStrings.categoryGeneral
+        ArticleCategory.HEALTH -> appStrings.categoryHealth
+        ArticleCategory.SCIENCE -> appStrings.categoryScience
+        ArticleCategory.SPORTS -> appStrings.categorySports
+        ArticleCategory.TECHNOLOGY -> appStrings.categoryTechnology
+    }
 }

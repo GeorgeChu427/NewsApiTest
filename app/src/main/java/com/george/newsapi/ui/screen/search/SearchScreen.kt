@@ -35,6 +35,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.george.newsapi.data.model.strings.Strings
 import com.george.newsapi.ui.Route
 import com.george.newsapi.ui.activity.SharedArticleViewModel
 import com.george.newsapi.ui.screen.headlines.ArticleCard
@@ -153,7 +154,7 @@ fun SearchTopAppBar(
                 onValueChange = { newText ->
                     onQueryChanged.invoke(newText)
                 },
-                label = { Text("請輸入關鍵字") }
+                label = { Text(Strings.current.searchHint) }
             )
         },
         navigationIcon = {

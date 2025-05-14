@@ -37,6 +37,7 @@ import coil3.compose.AsyncImage
 import com.george.newsapi.R
 import com.george.newsapi.data.model.api.article.Article
 import com.george.newsapi.data.model.api.article.Source
+import com.george.newsapi.data.model.strings.Strings
 import com.george.newsapi.ui.theme.Purple40
 
 /**
@@ -125,7 +126,7 @@ fun DetailScreen(
                 }
             ) {
                 Text(
-                    text = "開啟網頁"
+                    text = Strings.current.openWeb
                 )
             }
         }

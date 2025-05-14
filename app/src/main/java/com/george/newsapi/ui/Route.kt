@@ -11,6 +11,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.george.newsapi.SCREEN_NAV_DURATION
+import com.george.newsapi.data.model.strings.AppStrings
 
 enum class Route(
     val route: String,
@@ -110,6 +111,13 @@ enum class Route(
         navController.navigate(route)
     }
 
+    fun getTitle(appStrings: AppStrings): String {
+        return when (this) {
+            HEADLINES -> appStrings.titleHeadlines
+            CONFIG -> appStrings.titleConfig
+            else -> title
+        }
+    }
 
     companion object {
 

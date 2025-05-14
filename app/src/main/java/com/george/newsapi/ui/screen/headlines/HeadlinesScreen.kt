@@ -28,6 +28,7 @@ import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.george.newsapi.data.model.api.article.ArticleCategory
 import com.george.newsapi.data.model.api.article.displayName
+import com.george.newsapi.data.model.strings.Strings
 import com.george.newsapi.ui.Route
 import com.george.newsapi.ui.activity.SharedArticleViewModel
 import com.george.newsapi.ui.theme.MyApp
@@ -149,7 +150,7 @@ fun CategoryTabRow(
                 unselectedContentColor = Color.DarkGray,
                 text = {
                     Text(
-                        text = category.displayName(),
+                        text = category.displayName(Strings.current),
                         modifier = Modifier.padding(horizontal = 4.dp, vertical = 2.dp)
                     )
                 }

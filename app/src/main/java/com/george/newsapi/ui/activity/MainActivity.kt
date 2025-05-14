@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -27,26 +26,31 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.george.newsapi.R
+import com.george.newsapi.data.model.strings.Strings
 import com.george.newsapi.ui.Route
 import com.george.newsapi.ui.activity.data.BottomNavItem
 import com.george.newsapi.ui.composableByRoute
+import com.george.newsapi.ui.dialog.SwitchLanguageDialog
+import com.george.newsapi.ui.provider.AppStringsProvider
 import com.george.newsapi.ui.screen.config.ConfigScreen
+import com.george.newsapi.ui.screen.config.ConfigViewModel
 import com.george.newsapi.ui.screen.detail.DetailScreen
 import com.george.newsapi.ui.screen.headlines.HeadlinesScreen
 import com.george.newsapi.ui.screen.search.SearchScreen
@@ -66,49 +70,75 @@ class MainActivity : ComponentActivity() {
 
                 val sharedArticleViewModel: SharedArticleViewModel = hiltViewModel()
 
-                NavHost(
-                    navController = mainNavController,
-                    startDestination = Route.MAIN.route,
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    composableByRoute(Route.MAIN) {
-                        MainScreen(mainNavController, sharedArticleViewModel)
-                    }
-                    composableByRoute(Route.DETAIL) {
-                        val article by sharedArticleViewModel.selectedArticle.collectAsState()
+                val configViewModel: ConfigViewModel = hiltViewModel()
+                val languageCode by configViewModel.languageCode.collectAsStateWithLifecycle()
 
-                        if (article != null) {
-                            DetailScreen(
-                                article = article!!,
-                                onBackClick = {
-                                    mainNavController.popBackStack()
-                                    sharedArticleViewModel.clear()
-                                },
-                                onOpenWebClick = { url ->
-                                    Route.WEB.navigate(mainNavController)
-                                }
-                            )
-                        } else {
-                            Text("Article not found")
-                        }
-                    }
+                var isShowSwitchLanguageDialog by remember { mutableStateOf(false) }
 
-                    composableByRoute(Route.WEB) {
-                        val article by sharedArticleViewModel.selectedArticle.collectAsState()
-                        if (article != null && !article?.url.isNullOrBlank()) {
-                            WebViewScreen(
-                                article = article!!,
-                                onBackClick = {
-                                    mainNavController.popBackStack()
+                AppStringsProvider(languageCode = languageCode) {
+                    NavHost(
+                        navController = mainNavController,
+                        startDestination = Route.MAIN.route,
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        composableByRoute(Route.MAIN) {
+                            MainScreen(
+                                mainNavController,
+                                sharedArticleViewModel,
+                                onClickSwitchLanguage = {
+                                    isShowSwitchLanguageDialog = true
                                 }
                             )
                         }
+                        composableByRoute(Route.DETAIL) {
+                            val article by sharedArticleViewModel.selectedArticle.collectAsState()
+
+                            if (article != null) {
+                                DetailScreen(
+                                    article = article!!,
+                                    onBackClick = {
+                                        mainNavController.popBackStack()
+                                        sharedArticleViewModel.clear()
+                                    },
+                                    onOpenWebClick = { url ->
+                                        Route.WEB.navigate(mainNavController)
+                                    }
+                                )
+                            } else {
+                                Text("Article not found")
+                            }
+                        }
+
+                        composableByRoute(Route.WEB) {
+                            val article by sharedArticleViewModel.selectedArticle.collectAsState()
+                            if (article != null && !article?.url.isNullOrBlank()) {
+                                WebViewScreen(
+                                    article = article!!,
+                                    onBackClick = {
+                                        mainNavController.popBackStack()
+                                    }
+                                )
+                            }
+                        }
+
+                        composableByRoute(Route.SEARCH) {
+                            SearchScreen(
+                                mainNavController = mainNavController,
+                                sharedViewModel = sharedArticleViewModel
+                            )
+                        }
                     }
 
-                    composableByRoute(Route.SEARCH) {
-                        SearchScreen(
-                            mainNavController = mainNavController,
-                            sharedViewModel = sharedArticleViewModel
+                    if (isShowSwitchLanguageDialog) {
+                        SwitchLanguageDialog(
+                            currentSelection = languageCode,
+                            onDismiss = {
+                                isShowSwitchLanguageDialog = false
+                            },
+                            onConfirm = { newCode ->
+                                configViewModel.setLanguageCode(newCode)
+                                isShowSwitchLanguageDialog = false
+                            }
                         )
                     }
                 }
@@ -120,15 +150,15 @@ class MainActivity : ComponentActivity() {
     @Composable
     fun MainScreen(
         mainNavController: NavHostController,
-        sharedArticleViewModel: SharedArticleViewModel
+        sharedArticleViewModel: SharedArticleViewModel,
+        onClickSwitchLanguage: () -> Unit
     ) {
         val navController = rememberNavController()
 
-        var selectedItemIndex: Int by rememberSaveable {
+        var selectedItemIndex: Int by remember {
             mutableIntStateOf(0)
         }
 
-        // 控制 NavigationBar 顯示與否
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentRoute = navBackStackEntry?.destination?.route?.let {
             Route.find(it)
@@ -152,7 +182,7 @@ class MainActivity : ComponentActivity() {
                             }
                     )
                     Text(
-                        text = currentRoute.title,
+                        text = currentRoute.getTitle(Strings.current),
                         fontSize = 24.sp,
                         fontWeight = FontWeight.W500,
                         textAlign = TextAlign.Center,
@@ -166,7 +196,7 @@ class MainActivity : ComponentActivity() {
                         modifier = Modifier
                             .align(Alignment.CenterEnd)
                             .clickable {
-                                // todo Switch Language
+                                onClickSwitchLanguage.invoke()
                             }
                     )
                 }
@@ -179,7 +209,7 @@ class MainActivity : ComponentActivity() {
                             NavigationBarItem(
                                 selected = isSelected,
                                 label = {
-                                    Text(text = item.route.title)
+                                    Text(text = item.route.getTitle(Strings.current))
                                 },
                                 icon = {
                                     Icon(

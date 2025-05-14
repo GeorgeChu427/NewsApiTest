@@ -1,5 +1,6 @@
 package com.george.newsapi.data.repository.config
 
+import com.george.newsapi.data.model.store.config.LanguageCode
 import com.george.newsapi.data.model.store.config.ThemeMode
 import com.george.newsapi.data.store.config.AppConfigStore
 import com.george.newsapi.di.IoDispatcher
@@ -13,12 +14,12 @@ class ConfigRepositoryImpl @Inject constructor(
     @IoDispatcher private val dispatcher: CoroutineDispatcher
 ): ConfigRepository {
 
-    override fun getLanguageCode(): Flow<String> {
+    override fun getLanguageCode(): Flow<LanguageCode> {
         return configDataStore.languageCode
             .flowOn(dispatcher)
     }
 
-    override suspend fun setLanguageCode(code: String) {
+    override suspend fun setLanguageCode(code: LanguageCode) {
         configDataStore.setLanguageCode(code)
     }
 

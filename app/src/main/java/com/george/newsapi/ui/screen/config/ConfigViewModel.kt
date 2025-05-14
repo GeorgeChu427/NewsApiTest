@@ -2,6 +2,7 @@ package com.george.newsapi.ui.screen.config
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.george.newsapi.data.model.store.config.LanguageCode
 import com.george.newsapi.data.model.store.config.ThemeMode
 import com.george.newsapi.data.repository.config.ConfigRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,8 +17,8 @@ class ConfigViewModel @Inject constructor(
     private val configRepository: ConfigRepository
 ): ViewModel() {
 
-    private val _languageCode = MutableStateFlow("")
-    val languageCode: StateFlow<String> = _languageCode.asStateFlow()
+    private val _languageCode = MutableStateFlow(LanguageCode.English)
+    val languageCode: StateFlow<LanguageCode> = _languageCode.asStateFlow()
 
     private val _themeMode = MutableStateFlow(ThemeMode.SYSTEM)
     val themeMode: StateFlow<ThemeMode> = _themeMode.asStateFlow()
@@ -37,7 +38,7 @@ class ConfigViewModel @Inject constructor(
         }
     }
 
-    fun setLanguageCode(code: String) {
+    fun setLanguageCode(code: LanguageCode) {
         viewModelScope.launch {
             configRepository.setLanguageCode(code)
         }
