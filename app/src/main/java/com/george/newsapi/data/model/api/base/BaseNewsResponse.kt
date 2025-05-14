@@ -3,6 +3,7 @@ package com.george.newsapi.data.model.api.base
 import com.george.newsapi.data.model.exception.NewsApiException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 
@@ -65,12 +66,12 @@ open class BaseNewsResponse<T> {
     }
 }
 
-/**
- * 轉換成 flow
- */
-fun <T> BaseNewsResponse<T>.asFlow(
-    dispatcher: CoroutineDispatcher = Dispatchers.IO
-) = flow {
-    emit(getOrThrow())
+fun <T> callApiAsFlow(
+    dispatcher: CoroutineDispatcher = Dispatchers.IO,
+    api: suspend () -> BaseNewsResponse<T>
+): Flow<List<T>> {
+    return flow {
+        emit(api.invoke().getOrThrow())
+    }
+        .flowOn(dispatcher)
 }
-    .flowOn(dispatcher)

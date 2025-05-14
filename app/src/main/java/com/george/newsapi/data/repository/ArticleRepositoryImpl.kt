@@ -1,7 +1,7 @@
 package com.george.newsapi.data.repository
 
 import com.george.newsapi.data.model.api.article.Article
-import com.george.newsapi.data.model.api.base.asFlow
+import com.george.newsapi.data.model.api.base.callApiAsFlow
 import com.george.newsapi.data.model.api.queryparams.GetTopHeadlinesParams
 import com.george.newsapi.data.model.api.queryparams.SearchNewsParams
 import com.george.newsapi.data.service.NewsApiService
@@ -16,10 +16,14 @@ class ArticleRepositoryImpl @Inject constructor(
 ) : ArticleRepository {
 
     override suspend fun getTopHeadlinesArticles(params: GetTopHeadlinesParams): Flow<List<Article>> {
-        return apiService.getTopHeadlines(params.toQueryMap()).asFlow(dispatcher)
+        return callApiAsFlow(dispatcher) {
+            apiService.getTopHeadlines(params.toQueryMap())
+        }
     }
 
     override suspend fun searchNews(params: SearchNewsParams): Flow<List<Article>> {
-        return apiService.searchNews(params.toQueryMap()).asFlow(dispatcher)
+        return callApiAsFlow(dispatcher) {
+            apiService.searchNews(params.toQueryMap())
+        }
     }
 }
