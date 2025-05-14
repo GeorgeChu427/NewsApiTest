@@ -14,6 +14,9 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.george.newsapi.R
 import com.george.newsapi.data.model.api.article.Article
+import com.george.newsapi.ext.date.dateFormat
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 @Composable
 fun ArticleCard(
@@ -54,7 +57,7 @@ fun ArticleCard(
                 )
                 Spacer(modifier = Modifier.height(2.dp))
                 Text(
-                    text = article.publishedAt.orEmpty(),
+                    text = article.publishedAt.dateFormat(),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
