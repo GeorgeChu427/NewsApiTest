@@ -30,4 +30,11 @@ interface ArticleRepository {
      * 搜尋新聞
      */
     suspend fun searchNews(params: SearchNewsParams): Flow<List<Article>>
+
+    /**
+     * 搜尋新聞 (paging)
+     */
+    fun getSearchPagingFlow(
+        query: String,
+    ): Flow<PagingData<Article>>
 }

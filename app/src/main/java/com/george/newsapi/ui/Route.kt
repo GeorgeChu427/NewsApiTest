@@ -84,6 +84,26 @@ enum class Route(
                 animationSpec = tween(SCREEN_NAV_DURATION)
             )
         }
+    ),
+
+    /**
+     * 搜尋頁
+     */
+    SEARCH(
+        route = "search",
+        title = "Search",
+        enterTransition = {
+            slideIntoContainer(
+                AnimatedContentTransitionScope.SlideDirection.Start,
+                animationSpec = tween(SCREEN_NAV_DURATION)
+            )
+        },
+        exitTransition = {
+            slideOutOfContainer(
+                AnimatedContentTransitionScope.SlideDirection.End,
+                animationSpec = tween(SCREEN_NAV_DURATION)
+            )
+        }
     );
 
     fun navigate(navController: NavController) {

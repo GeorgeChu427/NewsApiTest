@@ -15,6 +15,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -46,6 +49,7 @@ import com.george.newsapi.ui.composableByRoute
 import com.george.newsapi.ui.screen.config.ConfigScreen
 import com.george.newsapi.ui.screen.detail.DetailScreen
 import com.george.newsapi.ui.screen.headlines.HeadlinesScreen
+import com.george.newsapi.ui.screen.search.SearchScreen
 import com.george.newsapi.ui.screen.webview.WebViewScreen
 import com.george.newsapi.ui.theme.MyApp
 import dagger.hilt.android.AndroidEntryPoint
@@ -100,6 +104,13 @@ class MainActivity : ComponentActivity() {
                             )
                         }
                     }
+
+                    composableByRoute(Route.SEARCH) {
+                        SearchScreen(
+                            mainNavController = mainNavController,
+                            sharedViewModel = sharedArticleViewModel
+                        )
+                    }
                 }
             }
         }
@@ -128,9 +139,18 @@ class MainActivity : ComponentActivity() {
                 Box(
                     modifier = Modifier
                         .padding(WindowInsets.statusBars.asPaddingValues())
-                        .height(40.dp)
+                        .height(50.dp)
                         .padding(horizontal = 12.dp)
                 ) {
+                    Icon(
+                        imageVector = Icons.Default.Search,
+                        contentDescription = "Search",
+                        modifier = Modifier
+                            .align(Alignment.CenterStart)
+                            .clickable {
+                                Route.SEARCH.navigate(mainNavController)
+                            }
+                    )
                     Text(
                         text = currentRoute.title,
                         fontSize = 24.sp,

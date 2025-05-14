@@ -9,6 +9,7 @@ import com.george.newsapi.data.model.api.article.ArticleCategory
 import com.george.newsapi.data.model.api.base.callApiAsFlow
 import com.george.newsapi.data.model.api.queryparams.GetTopHeadlinesParams
 import com.george.newsapi.data.model.api.queryparams.SearchNewsParams
+import com.george.newsapi.data.pagingsource.SearchPagingSource
 import com.george.newsapi.data.pagingsource.TopHeadlinesPagingSource
 import com.george.newsapi.data.service.NewsApiService
 import com.george.newsapi.di.IoDispatcher
@@ -51,5 +52,21 @@ class ArticleRepositoryImpl @Inject constructor(
         return callApiAsFlow(dispatcher) {
             apiService.searchNews(params.toQueryMap())
         }
+    }
+
+    override fun getSearchPagingFlow(query: String): Flow<PagingData<Article>> {
+        return Pager(
+            config = PagingConfig(
+                pageSize = GET_ARTICLE_PAGE_SIZE,
+                enablePlaceholders = false
+            ),
+            pagingSourceFactory = {
+                SearchPagingSource(
+                    apiService,
+                    query
+                )
+            }
+        )
+            .flow
     }
 }
