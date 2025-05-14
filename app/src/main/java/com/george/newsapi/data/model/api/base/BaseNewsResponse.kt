@@ -6,6 +6,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import kotlin.math.ceil
 
 /**
  * Api BaseResponse
@@ -58,6 +59,16 @@ open class BaseNewsResponse<T> {
         } else {
             throw toException()
         }
+    }
+
+    /**
+     * 是否還有下一頁
+     * @param currentPage 當前頁碼（從 1 開始）
+     * @param pageSize 每頁項目數
+     */
+    fun hasNextPage(currentPage: Int, pageSize: Int): Boolean {
+        val totalPages = ceil(totalResults / pageSize.toDouble()).toInt()
+        return currentPage < totalPages
     }
 
 

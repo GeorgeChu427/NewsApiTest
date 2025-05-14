@@ -54,6 +54,79 @@ class BaseNewsResponseTest {
         assertEquals(emptyList<Article>(), responseWithNullArticles.getOrThrow())
     }
 
+    /**
+     * hasNextPage
+     */
+    @Test
+    fun `hasNextPage returns true when current page is less than total pages`() {
+        val response = BaseNewsResponse<Any>(
+            status = "ok",
+            totalResults = 45
+        )
+        val currentPage = 2
+        val pageSize = 20
+
+        val result = response.hasNextPage(currentPage, pageSize)
+
+        assertTrue(result)
+    }
+
+    @Test
+    fun `hasNextPage returns false when current page equals total pages`() {
+        val response = BaseNewsResponse<Any>(
+            status = "ok",
+            totalResults = 40
+        )
+        val currentPage = 2
+        val pageSize = 20
+
+        val result = response.hasNextPage(currentPage, pageSize)
+
+        assertFalse(result)
+    }
+
+    @Test
+    fun `hasNextPage returns false when current page greater than total pages`() {
+        val response = BaseNewsResponse<Any>(
+            status = "ok",
+            totalResults = 30
+        )
+        val currentPage = 4
+        val pageSize = 10
+
+        val result = response.hasNextPage(currentPage, pageSize)
+
+        assertFalse(result)
+    }
+
+    @Test
+    fun `hasNextPage returns true when totalResults is not multiple of pageSize`() {
+        val response = BaseNewsResponse<Any>(
+            status = "ok",
+            totalResults = 25
+        )
+        val currentPage = 1
+        val pageSize = 20
+
+        val result = response.hasNextPage(currentPage, pageSize)
+
+        assertTrue(result)
+    }
+
+    @Test
+    fun `hasNextPage returns false when totalResults is zero`() {
+        val response = BaseNewsResponse<Any>(
+            status = "ok",
+            totalResults = 0
+        )
+        val currentPage = 1
+        val pageSize = 20
+
+        val result = response.hasNextPage(currentPage, pageSize)
+
+        assertFalse(result)
+    }
+
     @Test
     fun `callApiAsFlow should emit articles when API call is successful`() =
         runTest(testDispatcher) {

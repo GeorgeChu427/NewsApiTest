@@ -1,9 +1,15 @@
 package com.george.newsapi.data.repository
 
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import com.george.newsapi.GET_ARTICLE_PAGE_SIZE
 import com.george.newsapi.data.model.api.article.Article
+import com.george.newsapi.data.model.api.article.ArticleCategory
 import com.george.newsapi.data.model.api.base.callApiAsFlow
 import com.george.newsapi.data.model.api.queryparams.GetTopHeadlinesParams
 import com.george.newsapi.data.model.api.queryparams.SearchNewsParams
+import com.george.newsapi.data.pagingsource.TopHeadlinesPagingSource
 import com.george.newsapi.data.service.NewsApiService
 import com.george.newsapi.di.IoDispatcher
 import kotlinx.coroutines.CoroutineDispatcher
@@ -19,6 +25,26 @@ class ArticleRepositoryImpl @Inject constructor(
         return callApiAsFlow(dispatcher) {
             apiService.getTopHeadlines(params.toQueryMap())
         }
+    }
+
+    override fun getTopHeadlinesPagingFlow(
+        country: String,
+        category: ArticleCategory
+    ): Flow<PagingData<Article>> {
+        return Pager(
+            config = PagingConfig(
+                pageSize = GET_ARTICLE_PAGE_SIZE,
+                enablePlaceholders = false
+            ),
+            pagingSourceFactory = {
+                TopHeadlinesPagingSource(
+                    apiService,
+                    country,
+                    category
+                )
+            }
+        )
+            .flow
     }
 
     override suspend fun searchNews(params: SearchNewsParams): Flow<List<Article>> {

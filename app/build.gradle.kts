@@ -61,6 +61,7 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
     testImplementation(libs.turbine)
+    implementation(libs.bundles.paging)
 
 
     implementation(libs.bundles.navigation)
