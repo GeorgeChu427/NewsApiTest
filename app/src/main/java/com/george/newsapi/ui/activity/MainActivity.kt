@@ -1,10 +1,15 @@
 package com.george.newsapi.ui.activity
 
 import android.annotation.SuppressLint
+import android.os.Build
 import android.os.Bundle
+import android.view.View
+import android.view.WindowInsetsController
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
+import androidx.annotation.ColorInt
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -31,19 +36,25 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.flowWithLifecycle
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.george.newsapi.R
+import com.george.newsapi.data.model.store.config.ThemeMode
 import com.george.newsapi.data.model.strings.Strings
+import com.george.newsapi.ext.context.isSystemInDarkTheme
 import com.george.newsapi.ui.Route
 import com.george.newsapi.ui.activity.data.BottomNavItem
 import com.george.newsapi.ui.composableByRoute
@@ -57,22 +68,23 @@ import com.george.newsapi.ui.screen.search.SearchScreen
 import com.george.newsapi.ui.screen.webview.WebViewScreen
 import com.george.newsapi.ui.theme.MyApp
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    private val sharedArticleViewModel: SharedArticleViewModel by viewModels()
+    private val configViewModel: ConfigViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            MyApp {
+            MyApp(configViewModel) {
                 val mainNavController = rememberNavController()
 
-                val sharedArticleViewModel: SharedArticleViewModel = hiltViewModel()
-
-                val configViewModel: ConfigViewModel = hiltViewModel()
                 val languageCode by configViewModel.languageCode.collectAsStateWithLifecycle()
-
                 var isShowSwitchLanguageDialog by remember { mutableStateOf(false) }
 
                 AppStringsProvider(languageCode = languageCode) {
@@ -143,6 +155,14 @@ class MainActivity : ComponentActivity() {
                     }
                 }
             }
+        }
+
+        lifecycleScope.launch {
+            configViewModel.themeMode
+                .flowWithLifecycle(lifecycle)
+                .collect {
+                    setStatusBarColor(it)
+                }
         }
     }
 
@@ -239,7 +259,40 @@ class MainActivity : ComponentActivity() {
                     )
                 }
                 composableByRoute(Route.CONFIG) {
-                    ConfigScreen()
+                    ConfigScreen(
+                        viewModel = configViewModel
+                    )
+                }
+            }
+        }
+    }
+
+    fun setStatusBarColor(themeMode: ThemeMode) {
+        val isLightMode = when (themeMode) {
+            ThemeMode.LIGHT -> true
+            ThemeMode.DARK -> false
+            ThemeMode.SYSTEM -> !isSystemInDarkTheme()
+        }
+
+        window.statusBarColor = if (isLightMode) {
+            Color.White.toArgb()
+        } else {
+            Color.Black.toArgb()
+        }
+
+        when {
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.R -> {
+                window.insetsController?.setSystemBarsAppearance(
+                    if (isLightMode) WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS else 0,
+                    WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
+                )
+            }
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.M -> {
+                val decorView = window.decorView
+                decorView.systemUiVisibility = if (isLightMode) {
+                    decorView.systemUiVisibility or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+                } else {
+                    decorView.systemUiVisibility and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
                 }
             }
         }

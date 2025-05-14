@@ -1,5 +1,6 @@
 package com.george.newsapi.ui.screen.config
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.george.newsapi.data.model.store.config.LanguageCode
@@ -11,6 +12,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import okhttp3.internal.toHexString
 
 @HiltViewModel
 class ConfigViewModel @Inject constructor(
@@ -24,6 +26,7 @@ class ConfigViewModel @Inject constructor(
     val themeMode: StateFlow<ThemeMode> = _themeMode.asStateFlow()
 
     init {
+        Log.i("ConfigViewModel", "[${this.hashCode().toHexString()}] init")
         viewModelScope.launch {
             launch {
                 configRepository.getLanguageCode().collect {
