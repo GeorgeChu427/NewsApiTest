@@ -46,12 +46,12 @@ class HeadlinesViewModel @Inject constructor(
             .flowOn(dispatcher)
             .cachedIn(viewModelScope)
 
-    fun randomCategory() {
+    /**
+     * 設定文章類別
+     */
+    fun setCategory(category: ArticleCategory) {
         viewModelScope.launch(dispatcher) {
-            val randomCategory = ArticleCategory.entries
-                .filter { it != ArticleCategory.ALL }
-                .random()
-            _category.emit(randomCategory)
+            _category.emit(category)
         }
     }
 }

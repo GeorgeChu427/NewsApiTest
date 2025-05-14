@@ -2,6 +2,8 @@ package com.george.newsapi.data.model.api.article
 
 enum class ArticleCategory(val value: String) {
 
+    ALL(""),
+
     BUSINESS("business"),
 
     ENTERTAINMENT("entertainment"),
@@ -14,15 +16,10 @@ enum class ArticleCategory(val value: String) {
 
     SPORTS("sports"),
 
-    TECHNOLOGY("technology"),
-
-    ALL("");
+    TECHNOLOGY("technology");
 
 
     companion object {
-        /**
-         * 由字串取得對應的 NewsCategory，無法解析則回傳 [ALL]
-         */
         fun fromValue(value: String?): ArticleCategory {
             return entries.find {
                 it.value.equals(value, ignoreCase = true)
@@ -30,4 +27,8 @@ enum class ArticleCategory(val value: String) {
         }
     }
 
+}
+
+fun ArticleCategory.displayName(): String {
+    return name.lowercase().replaceFirstChar { it.uppercase() }
 }
